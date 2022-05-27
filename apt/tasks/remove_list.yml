@@ -1,0 +1,5 @@
+---
+- name: remove source list file
+  file:
+    state: absent
+    path: '{{ apt_list_path }}'

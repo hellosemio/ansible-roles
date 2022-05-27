@@ -1,0 +1,4 @@
+---
+- name: write the apt source list file
+  template: src=sources.list.j2 dest='{{ apt_path }}/sources.list' backup=yes
+  notify: Apt Update

@@ -1,0 +1,6 @@
+---
+# author: semio
+
+apt_path: '/etc/apt'
+apt_list_path: '/etc/apt/sources.list.d'
+

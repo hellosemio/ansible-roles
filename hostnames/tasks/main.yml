@@ -1,0 +1,9 @@
+---
+- name: change hostname
+  hostname: 'name={{hostname|quote}}'
+
+- name: change hostfile
+  template:
+    dest: '/etc/hosts'
+    src: hosts.j2
+
