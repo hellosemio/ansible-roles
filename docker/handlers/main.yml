@@ -1,0 +1,9 @@
+---
+# author: semio
+#
+- name: Apt Update
+  apt: 
+    update_cache: yes
+
+- name: Restart Docker-ce
+  systemd: name=docker state=restarted enabled=yes
