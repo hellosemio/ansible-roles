@@ -1,4 +1,29 @@
 ---
+# author: semio
+#
+- name: create the ansible user account
+  user:
+    name: ansible
+    append: yes
+    state: present
+    createhome: yes
+    shell: /bin/bash
+
+- name: change hostname
+  hostname:
+    name: '{{hostname|quote}}'
+
+- name: install sudo
+  apt:
+    name: sudo
+    state: present
+
+- name: allow ansible to use sudo without needing a passwd
+  lineinfile:
+    dest: /etc/sudoers
+    line: 'ansible ALL=(ALL) NOPASSWD: ALL'
+    validate: 'visudo -cf %s'
+
 - name: ssh key copy
   authorized_key:
     user: ansible

@@ -1,0 +1,27 @@
+---
+# author: semio
+#
+- name: install auditd packages
+  apt:
+    name: "{{item}}"
+    state: latest
+  loop: "{{auditd_packages}}"
+
+- name: add auditd rules
+  copy:
+    src: audit.rules
+    dest: /etc/audit/rules.d/audit.rules
+    mode: 0644
+
+- name: modify auditd configure
+  lineinfile:
+    path: /etc/audit/auditd.conf
+    regexp: "max_log_file =.*"
+    line: max_log_file = 80
+
+- name: restart auditd
+  systemd:
+    name: auditd
+    state: restarted
+    enabled: yes
+

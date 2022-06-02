@@ -1,0 +1,24 @@
+---
+# author: semio
+#
+- name: install ipvs series packages
+  apt:
+    name: "{{item}}"
+    state: latest
+  loop: "{{ipvs_install_packages}}"
+
+- name: configure ipvs modules
+  shell:
+    cmd: |
+        echo {{item}} >> /etc/modules-load.d/ipvs.conf
+  loop: "{{ipvs_module}}"
+
+- name: ensure systemd-modules-load start & enable
+  systemd:
+    name: systemd-modules-load.service
+    state: started
+    enabled: yes
+
+- name: Clear the virtual server table
+  shell: |
+          ipvsadm --clear

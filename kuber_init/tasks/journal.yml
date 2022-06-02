@@ -1,0 +1,17 @@
+---
+# author: semio
+#
+- name: create journal log directory
+  file:
+    path: /var/log/journal /etc/systemd/journald.conf.d
+    state: directory
+
+- name: cteat journal config directory
+  file:
+    path: /etc/systemd/journald.conf.d
+    state: directory
+
+- name: journal log configure
+  copy:
+    src: 99-prophet.conf
+    dest: /etc/systemd/journald.conf.d/99-prophet.conf

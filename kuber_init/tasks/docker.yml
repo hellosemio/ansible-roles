@@ -1,0 +1,79 @@
+---
+# author: semio
+#
+- name: install docker-compose
+  copy:
+    src: docker-compose-linux-x86_64
+    dest: /usr/local/bin/docker-compose
+    mode: 0755
+
+- name: remove docker history packages
+  apt:
+    name: "{{ item }}"
+    state: absent
+  loop: "{{ docker_old }}"
+
+- name: install docker dependent packages
+  apt:
+    name: "{{ item }}"
+    state: latest 
+    update_cache: yes
+  loop: "{{ docker_dependent_packages }}"
+
+- name: download GPG
+  apt_key:
+    url: https://download.docker.com/linux/debian/gpg
+    keyring: /usr/share/keyrings/docker-archive-keyring.gpg
+
+- name: create apt directory
+  file:
+    path: /etc/apt/sources.list.d
+    state: directory
+
+- name: add repository
+  copy:
+    src: docker-ce.list
+    dest: /etc/apt/sources.list.d/docker-ce.list
+    owner: root
+    group: root
+    mode: 0644
+  notify: Apt Update
+
+- name: create docker config directory
+  file:
+    path: /etc/docker
+    state: directory
+
+- name: install docker-ce packages
+  apt:
+    name: "{{ item }}"
+    state: latest
+  loop: "{{ docker_install_packages }}"
+
+- name: ensure docker hold update
+  shell: |
+    apt-mark hold docker-ce docker-ce-cli containerd.io
+
+- name: configure docker startup parameters
+  template:
+    src: daemon.json.j2
+    dest: /etc/docker/daemon.json
+
+- name: set docker completion
+  copy:
+    remote_src: yes
+    src: /usr/share/bash-completion/completions/docker
+    dest: /etc/bash_completion.d/docker
+  notify: Restart Docker-ce
+
+- name: modify containerd configure
+  lineinfile:
+    path: /etc/containerd/config.toml
+    regexp: "#oom_score = 0"
+    line: oom_score = -999
+
+- name: ensure containerd enable
+  systemd:
+    name: containerd
+    state: restarted
+    enabled: yes

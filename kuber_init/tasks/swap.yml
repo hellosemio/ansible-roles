@@ -1,0 +1,7 @@
+---
+# author: semio
+#
+- name: stop swap
+  shell: |
+          swapoff -a && sysctl -w vm.swappiness=0
+          sed -ri '/^[^#]*swap/s@^@#@' /etc/fstab

@@ -1,0 +1,9 @@
+---
+# author: semio
+#
+- name: change sysctl
+  copy:
+    src: 99-kube.conf
+    dest: /etc/sysctl.d/99-kube.conf
+    mode: 0644
+  notify: Sysctl Change

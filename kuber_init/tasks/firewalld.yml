@@ -1,0 +1,12 @@
+---
+# author: semio
+#
+- name: stop firewall
+  systemd: 
+    name: firewalld
+    enabled: no
+    state: stopped
+
+- name: stop iptable
+  shell: |
+          iptables -F && iptables -t nat -F && iptables -t mangle -F && iptables -X

@@ -1,0 +1,38 @@
+# Remove any existing rules
+-D
+
+# Buffer Size
+-b 8192
+
+# Failure Mode
+-f 1
+
+# Ignore errors
+-i 
+
+# docker
+-w /usr/bin/dockerd -k docker
+-w /var/lib/docker -k docker
+-w /etc/docker -k docker
+-w /usr/lib/systemd/system/docker.service -k docker
+-w /etc/systemd/system/docker.service -k docker
+-w /usr/lib/systemd/system/docker.socket -k docker
+-w /etc/default/docker -k docker
+-w /etc/sysconfig/docker -k docker
+-w /etc/docker/daemon.json -k docker
+
+# containerd
+-w /usr/bin/containerd -k containerd
+-w /var/lib/containerd -k containerd
+-w /usr/lib/systemd/system/containerd.service -k containerd
+-w /etc/containerd/config.toml -k containerd
+
+# runc 
+-w /usr/bin/runc -k runc
+
+# kube
+-w /usr/bin/kubeadm -k kubeadm
+-w /usr/bin/kubelet -k kubelet
+-w /usr/bin/kubectl -k kubectl
+-w /var/lib/kubelet -k kubelet
+-w /etc/kubernetes -k kubernetes

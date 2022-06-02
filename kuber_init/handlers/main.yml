@@ -1,0 +1,10 @@
+---
+- name: Apt Update
+  apt: update_cache=true
+
+- name: Sysctl Change
+  shell: |
+          sysctl --system
+
+- name: Restart Docker-ce
+  systemd: name=docker state=restarted enabled=yes

@@ -1,0 +1,43 @@
+---
+# author: semio
+
+ipvs_install_packages:
+  - ipvsadm
+  - ipset
+  - sysstat
+  - conntrack
+  - libseccomp2
+
+auditd_packages:
+  - auditd
+  - audispd-plugins
+
+docker_old:
+  - docker
+  - docker-common
+  - docker-selinux
+  - docker-engine
+  - docker.io
+  - containerd
+  - runc
+
+docker_dependent_packages:
+  - apt-transport-https
+  - ca-certificates
+  - curl
+  - gnupg2
+  - software-properties-common
+  - bash-completion
+
+docker_install_packages:
+  - docker-ce
+  - docker-ce-cli
+  - containerd.io
+
+ipvs_module:
+  - ip_vs
+  - ip_vs_rr
+  - ip_vs_wrr
+  - ip_vs_sh
+  - nf_conntrack
+  - br_netfilter

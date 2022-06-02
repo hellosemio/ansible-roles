@@ -1,0 +1,6 @@
+---
+# author: semio
+#
+- name: modify dns configure
+  shell: |
+    grep single-request-reopen /etc/resolv.conf || sed -i '1ioptions timeout:2 attempts:3 rotate single-request-reopen' /etc/resolv.conf

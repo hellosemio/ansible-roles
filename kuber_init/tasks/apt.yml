@@ -1,0 +1,33 @@
+---
+- name: remove source list file
+  file:
+    state: absent
+    path: '{{ apt_list_path }}'
+
+- name: write the apt source list file
+  template: src=sources.list.j2 dest='{{ apt_path }}/sources.list' backup=yes
+  notify: Apt Update
+
+- name: remove install service auto
+  shell:
+    cmd: |
+          echo -e '#!/bin/sh\nexit 101' | install -m 755 /dev/stdin /usr/sbin/policy-rc.d
+
+- name: stop apt-daily
+  systemd:
+    name: apt-daily
+    state: stopped
+    enabled: no
+    masked: yes
+
+- name: stop apt-daily-upgrade
+  systemd:
+    name: apt-daily-upgrade
+    enabled: no
+    masked: yes
+
+- name: apt cloudinit disable
+  copy:
+    src: 10cloudinit-disable
+    dest: /etc/apt/apt.conf.d/10cloudinit-disable
+    mode: 0644

@@ -1,0 +1,22 @@
+---
+# author: semio
+#
+- name: security limits configure backup
+  shell: |
+          [ ! -f /etc/security/limits.conf_bak ] && cp /etc/security/limits.conf {,_bak}
+
+- name: security limits configure
+  copy:
+    src: limits.conf
+    dest: /etc/security/limits.conf
+    mode: 0644
+
+- name: system limits configure backup
+  shell: |
+          [ ! -f /etc/systemd/system.conf_bak ] && cp /etc/systemd/system.conf {,_bak}
+
+- name: system limits configure
+  copy:
+    src: system.conf
+    dest: /etc/systemd/system.conf
+    mode: 0644

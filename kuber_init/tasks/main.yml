@@ -1,0 +1,26 @@
+---
+# author: semio
+#
+- import_tasks: apt.yml
+
+- import_tasks: swap.yml
+
+- import_tasks: limit.yml
+
+- import_tasks: sysctl.yml
+
+- import_tasks: history_ps1.yml
+
+- import_tasks: journal.yml
+
+- import_tasks: ssh_login.yml
+
+- import_tasks: chrony.yml
+
+- import_tasks: ipvs.yml
+
+- import_tasks: auditd.yml
+
+- import_tasks: dns.yml
+
+- import_tasks: docker.yml

@@ -1,0 +1,20 @@
+---
+# author: semio
+#
+- name: history format && ps1
+  shell:
+    cmd: |
+          cat << EOF >> /etc/bash.bashrc
+          # history actions record，include action time, user, login ip
+          HISTFILESIZE=5000
+          HISTSIZE=5000
+          USER_IP=\$(who -u am i 2>/dev/null | awk '{print \$NF}' | sed -e 's/[()]//g')
+          if [ -z \$USER_IP ];then
+            USER_IP=\$(hostname -i)
+          fi
+          HISTTIMEFORMAT="%Y-%m-%d %H:%M:%S \$USER_IP:\$(whoami) "
+          export HISTFILESIZE HISTSIZE HISTTIMEFORMAT
+
+          # PS1
+          PS1='\[\033[0m\]\[\033[1;36m\][\u\[\033[0m\]@\[\033[1;32m\]\h\[\033[0m\] \[\033[1;31m\]\w\[\033[0m\]\[\033[1;36m\]]\[\033[33;1m\]\\$ \[\033[0m\]'
+          EOF

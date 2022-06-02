@@ -1,0 +1,9 @@
+---
+# author: semio
+
+apt_path: '/etc/apt'
+apt_list_path: '/etc/apt/sources.list.d/kubernetes.list'
+
+docker_data_root: /var/lib/docker
+docker_registry_mirrors: ["https://yssx4sxy.mirror.aliyuncs.com/","https://1nj0zren.mirror.aliyuncs.com","https://kfwkfulq.mirror.aliyuncs.com","https://2lqq34jg.mirror.aliyuncs.com","https://pee6w651.mirror.aliyuncs.com","http://hub-mirror.c.163.com","https://docker.mirrors.ustc.edu.cn","http://f1361db2.m.daocloud.io","https://registry.docker-cn.com"]
+docker_insecure_registries: ["192.168.3.125:80"]

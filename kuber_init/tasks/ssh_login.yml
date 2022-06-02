@@ -1,0 +1,19 @@
+---
+# author: semio
+#
+- name: create ssh login banner
+  copy:
+    src: zz-ssh-login-info.sh
+    dest: /etc/profile.d/zz-ssh-login-info.sh
+    mode: a+x
+
+- name: install crictl
+  copy:
+    src: crictl
+    dest: /usr/bin/crictl
+    mode: 0755
+
+- name: add crictl sudo privileges
+  shell:
+    cmd: |
+          echo 'ALL ALL=NOPASSWD: /usr/bin/crictl info' > /etc/sudoers.d/crictl
