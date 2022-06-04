@@ -1,0 +1,16 @@
+---
+# author: semio
+#
+etcd_pki_path: /etc/etcd/ssl
+kubernetes_pki_path: /etc/kubernetes/pki
+kubernetes_path: /etc/kubernetes
+
+local_etcd_pki_path: /opt/project/roles/pki/files/ssl
+local_kubernetes_pki_path: /opt/project/roles/pki/files/pki
+local_kubernetes_path: /opt/project/roles/pki/files
+
+ip: "{{ansible_default_ipv4['address']}}"
+etcd_hosts: ["127.0.0.1","192.168.3.106","192.168.3.108","192.168.3.109","*.etcd.local"]
+kuber_hosts: ["127.0.0.1","10.88.0.1","192.168.3.106","192.168.3.108","192.168.3.109","localhost","*.master.kubernetes.node","kubernetes","kubernetes.default","kubernetes.default.svc","kubernetes.default.svc.cluster","kubernetes.default.svc.cluster.local"]
+
+kube_apiserver: "https://127.0.0.1:6443"
