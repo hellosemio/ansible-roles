@@ -1,0 +1,16 @@
+---
+# author: semio
+#
+make_pki_master: 192.168.3.106
+
+ip: "{{ansible_default_ipv4['address']}}"
+
+kube_apiserver: "https://127.0.0.1:6443"
+
+pki_path: ../pki/files
+etcd_pki_path: /etc/etcd/ssl
+kubernetes_pki_path: /etc/kubernetes/pki
+kubernetes_path: /etc/kubernetes
+secret_file: encryption.yaml
+audit_file: audit-policy.yaml
+

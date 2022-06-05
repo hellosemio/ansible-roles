@@ -1,0 +1,7 @@
+---
+# author: semio
+#
+- name: install haproxy
+  apt:
+    name: haproxy
+    state: present

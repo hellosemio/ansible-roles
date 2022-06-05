@@ -1,0 +1,35 @@
+---
+# author: semio
+#
+etcd_pki_file:
+  - etcd-ca-key.pem
+  - etcd-ca.pem
+  - etcd-key.pem
+  - etcd.pem
+
+kubelet_pki:
+  - ca.pem
+  - kubelet-"{{ip}}".pem
+  - kubelet-"{{ip}}"-key.pem
+
+kube_pki_file:
+  - ca-key.pem
+  - apiserver.pem
+  - apiserver-key.pem
+  - front-proxy-ca.pem
+  - front-proxy-ca-key.pem
+  - front-proxy-client.pem
+  - front-proxy-client-key.pem
+  - controller-manager.pem
+  - controller-manager-key.pem
+  - scheduler.pem
+  - scheduler-key.pem
+  - admin.pem
+  - admin-key.pem
+  - sa.key
+  - sa.pub
+
+kube_config:
+  - admin.kubeconfig
+  - controller-manager.kubeconfig
+  - scheduler.kubeconfig

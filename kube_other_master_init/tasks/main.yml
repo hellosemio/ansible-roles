@@ -1,0 +1,57 @@
+---
+# author: semio
+#
+- name: create etcd pki directory
+  file:
+    path: "{{etcd_pki_path}}"
+    state: directory
+
+- name: copy etcd pki
+  copy:
+    src: "{{pki_path}}/{{make_pki_master}}/{{etcd_pki_path}}/{{item}}"
+    dest: "{{etcd_pki_path}}/{{item}}"
+  loop: "{{etcd_pki_file}}"
+
+- name: create kubernetes pki directory
+  file:
+    path: "{{kubernetes_pki_path}}"
+    state: directory
+
+- name: copy kubelet certificate
+  copy:
+    src: "{{pki_path}}/{{make_pki_master}}/{{kubernetes_pki_path}}/{{item}}"
+    dest: "{{kubernetes_pki_path}}/{{item}}"
+  loop: "{{kubelet_pki}}"
+
+- name: create kubelet kubeconfig
+  shell: |
+    NODE="{{ip}}"
+    source /etc/profile
+    kubectl config set-cluster kubernetes --certificate-authority=ca.pem --embed-certs=true --server="{{kube_apiserver}}" --kubeconfig=../kubelet.kubeconfig
+    kubectl config set-credentials system:node:${NODE} --client-certificate=kubelet-${NODE}.pem --client-key=kubelet-${NODE}-key.pem --embed-certs=true --kubeconfig=../kubelet.kubeconfig
+    kubectl config set-context system:node:${NODE}@kubernetes --cluster=kubernetes --user=system:node:${NODE} --kubeconfig=../kubelet.kubeconfig
+    kubectl config use-context system:node:${NODE}@kubernetes --kubeconfig=../kubelet.kubeconfig
+  args:
+    chdir: "{{kubernetes_pki_path}}"
+
+- name: copy secret file
+  copy:
+    src: "{{pki_path}}/{{secret_file}}"
+    dest: "{{kubernetes_path}}/{{secret_file}}"
+
+- name: copy audit file
+  copy:
+    src: "{{pki_path}}/{{audit_file}}"
+    dest: "{{kubernetes_path}}/{{audit_file}}"
+
+- name: copy kube pki
+  copy:
+    src: "{{pki_path}}/{{make_pki_master}}/{{kubernetes_pki_path}}/{{item}}"
+    dest: "{{kubernetes_pki_path}}/{{item}}"
+  loop: "{{kube_pki_file}}"
+
+- name: copy kube config
+  copy:
+    src: "{{pki_path}}/{{make_pki_master}}/{{kubernetes_path}}/{{item}}"
+    dest: "{{kubernetes_path}}/{{item}}"
+  loop: "{{kube_config}}"

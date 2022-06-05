@@ -1,0 +1,9 @@
+---
+# author: semio
+#
+- name: copy cfssl file
+  copy:
+    src: "{{item}}"
+    dest: "{{cfssl_install_path}}"
+    mode: a+x
+  loop: "{{cfssl_file}}"

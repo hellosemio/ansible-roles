@@ -1,0 +1,10 @@
+---
+# author: semio
+#
+- name: install etcd file
+  copy:
+    src: "{{item}}"
+    dest: "{{etcd_install_path}}"
+    mode: a+x
+  loop: "{{etcd}}"
+

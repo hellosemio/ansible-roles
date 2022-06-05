@@ -1,0 +1,8 @@
+---
+# author: semio
+#
+
+etcd:
+  - etcd
+  - etcdctl
+  - etcdutl

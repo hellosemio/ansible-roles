@@ -1,0 +1,4 @@
+---
+# author: semio
+#
+etcd_install_path: /usr/local/bin/

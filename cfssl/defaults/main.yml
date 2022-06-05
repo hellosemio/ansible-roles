@@ -1,0 +1,4 @@
+---
+# author: semio
+#
+cfssl_install_path: /usr/local/bin

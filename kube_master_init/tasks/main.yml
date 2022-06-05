@@ -1,0 +1,9 @@
+---
+# author: semio
+#
+- name: copy kube file
+  copy:
+    src: "{{item}}"
+    dest: "{{kube_install_path}}"
+    mode: a+x
+  loop: "{{kube_file}}"

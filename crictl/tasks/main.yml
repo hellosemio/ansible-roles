@@ -1,0 +1,13 @@
+---
+# author: semio
+#
+- name: install crictl
+  copy:
+    src: crictl
+    dest: "{{install_path}}"
+    mode: a+x
+
+- name: copy configure file
+  copy:
+    src: crictl.yaml
+    dest: /etc/crictl.yaml

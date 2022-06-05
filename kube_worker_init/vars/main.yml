@@ -1,0 +1,6 @@
+---
+# author: semio
+#
+kube_file:
+  - kubelet
+  - kube-proxy

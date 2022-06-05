@@ -1,0 +1,7 @@
+---
+# author: semio
+#
+cfssl_file:
+  - cfssl
+  - cfssl-certinfo
+  - cfssljson
