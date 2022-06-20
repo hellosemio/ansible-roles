@@ -1,0 +1,25 @@
+---
+# author: semio
+#
+- name: create log directory
+  file:
+    path: "{{kube_log_path}}/apiserver"
+    state: directory
+
+- name: ensure apiserver configure
+  template:
+    src: kube-apiserver.conf.j2
+    dest: "{{kube_path}}/kube-apiserver.conf"
+
+- name: ensure apiserver service
+  copy:
+    src: kube-apiserver.service
+    dest: "{{service_file_path}}/kube-apiserver.service"
+
+- name: start apiserver service
+  systemd:
+    name: kube-apiserver.service
+    daemon_reload: yes
+    enabled: yes
+    state: started
+

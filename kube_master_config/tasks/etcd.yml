@@ -1,0 +1,72 @@
+---
+# author: semio
+#
+- name: create etcd group
+  group:
+    name: etcd
+
+- name: create etcd user
+  user:
+    name: etcd
+    group: etcd
+    shell: /sbin/nologin
+
+- name: change etcd pki directory
+  file:
+    path: "{{etcd_pki_path}}"
+    state: directory
+    owner: etcd
+    group: etcd
+
+- name: change etcd pki file user
+  shell: chown etcd.etcd ./*
+  args:
+    chdir: "{{etcd_pki_path}}"
+    warn: no
+
+- name: change etcd file user
+  shell: chmod 755 /usr/local/bin/etcd*
+  args:
+    warn: no
+
+- name: change etcd date directory user
+  file:
+    path: "{{etcd_data_path}}"
+    state: directory
+    owner: etcd
+    group: etcd
+
+- name: create etcd wal directory
+  file:
+    path: "{{etcd_data_path}}/wal"
+    state: directory
+    owner: etcd
+    group: etcd
+
+- name: create etcd config file
+  template:
+    src: etcd.conf.j2
+    dest: /etc/etcd/etcd.conf
+    owner: etcd
+    group: etcd
+
+- name: create etcd service
+  copy:
+    src: etcd.service
+    dest: "{{service_file_path}}/etcd.service"
+    mode: "0755"
+
+- name: start etcd service
+  systemd:
+    name: etcd.service
+    daemon_reload: yes
+    enabled: yes
+    state: started
+
+- name: check etcd cluster status
+  shell: ETCDCTL_API=3 etcdctl --endpoints="{{ip}}:2379" --cacert="{{etcd_pki_path}}"/etcd-ca.pem --cert="{{etcd_pki_path}}"/etcd.pem --key="{{etcd_pki_path}}"/etcd-key.pem member list
+  register: result
+
+- name: output etcd status 
+  debug:
+    var: result 

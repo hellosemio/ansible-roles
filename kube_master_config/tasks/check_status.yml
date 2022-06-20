@@ -1,0 +1,48 @@
+---
+# author: semio
+#
+- name: wait for etcd to start
+  wait_for: port=2379
+
+- name: wait for apiserver to start
+  wait_for: port=6443
+
+    #- name: wait for kubelet to start
+    #  wait_for: port=10248
+
+    #- name: wait for kube-scheduler to start
+    #  wait_for: port=10251
+
+    #- name: wait for kube-controller to start
+    #  wait_for: port=10252
+
+- name: wait for cluster to start
+  shell: kubectl get cs
+  register: waiting_for_cluster
+  until: waiting_for_cluster.rc == 0 and waiting_for_cluster.stdout.find("Unhealthy") == -1
+  retries: 10
+  delay: 5
+  changed_when: false
+  ignore_errors: true
+
+- name: check kube apiserver version
+  uri:
+    url: "https://{{kube_apiserver}}:{{kube_apiserver_port}}/version"
+    client_cert: "{{kube_pki_path}}/apiserver.pem"
+    client_key: "{{kube_pki_path}}/apiserver-key.pem"
+    validate_certs: no
+  register: result_version
+  until: result_version.status == 200
+  retries: 10
+  delay: 5
+
+- name: curl kube v1 api
+  uri:
+    url: "https://{{kube_apiserver}}:{{kube_apiserver_port}}/api/v1"
+    client_cert: "{{kube_pki_path}}/apiserver.pem"
+    client_key: "{{kube_pki_path}}/apiserver-key.pem"
+    validate_certs: no
+  register: result_api
+  until: result_api.status == 200
+  retries: 10
+  delay: 5

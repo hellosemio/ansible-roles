@@ -1,0 +1,19 @@
+---
+# author: semio
+#
+etcd_cluster_state: new
+etcd_cluster_number: "{{play_hosts | length}}"
+
+kube_cluster_ip_range: "10.88.0.0/16"
+kube_cluster_cidr: "10.0.0.0/16"
+kube_apiserver: "127.0.0.1"
+kube_apiserver_port: "6443"
+kube_cluster_dns: "10.88.0.10"
+kube_cluster_domain: "cluster.local"
+
+kub_pause_image: "kubernetes/pause"
+
+rbac_files:
+  - apiserver-to-kubelet-rbac.yaml
+  - kubelet-bootstrap-rbac.yaml
+  - kubelet-bootstrap-secret.yaml

@@ -1,0 +1,119 @@
+---
+# author: semio
+#
+- name: create token_id
+  shell: openssl rand -hex 3
+  register: id
+
+- name: create token_secret
+  shell: openssl rand -hex 8
+  register: secret
+
+- name: defined vars
+  set_fact:
+    token_id: "{{id.stdout}}"
+    token_secret: "{{secret.stdout}}"
+    bootstrap_token: "{{id.stdout}}.{{secret.stdout}}"
+
+- name: create kubelet work directory
+  file:
+    path: "/var/lib/kubelet"
+    state: directory
+
+- name: create kubelet manifests directory
+  file:
+    path: "{{kube_manifests_path}}"
+    state: directory
+
+- name: create kubelet log directory
+  file:
+    path: "{{kube_log_path}}/kubelet"
+    state: directory
+
+- name: copy pause image
+  copy:
+    src: pause.tar
+    dest: /opt/pause.tar
+    mode: "0755"
+
+- name: import pause image
+  shell: docker load -i /opt/pause.tar
+
+- name: create the TLS Bootstrapping RBAC kubeconfig
+  shell: |
+    kubectl config set-cluster kubernetes --certificate-authority=ca.pem --embed-certs=true --server=https://{{ kube_apiserver }}:{{ kube_apiserver_port }} --kubeconfig=../bootstrap-kubelet.kubeconfig
+    kubectl config set-credentials tls-bootstrap-token-user --token={{ bootstrap_token }} --kubeconfig=../bootstrap-kubelet.kubeconfig
+    kubectl config set-context tls-bootstrap-token-user@kubernetes --cluster=kubernetes --user=tls-bootstrap-token-user --kubeconfig=../bootstrap-kubelet.kubeconfig
+    kubectl config use-context tls-bootstrap-token-user@kubernetes --kubeconfig=../bootstrap-kubelet.kubeconfig
+  args:
+    chdir: "{{kube_pki_path}}"
+
+- name: create kubelet config
+  template:
+    src: kubelet-conf.yaml
+    dest: "{{kube_path}}/kubelet-conf.yaml"
+
+- name: create kubelet service
+  template:
+    src: kubelet.service
+    dest: "{{service_file_path}}/kubelet.service"
+
+- name: create kube conifg directory
+  file:
+    path: ~/.kube
+    state: directory
+    mode: "0755"
+
+- name: copy admin kubeconfig
+  copy:
+    src: "{{kube_path}}/admin.kubeconfig"
+    dest: ~/.kube/config
+    remote_src: yes
+
+- name: set kubectl completion
+  shell: kubectl completion bash > /etc/bash_completion.d/kubectl
+
+- name: start kubelet service
+  systemd:
+    name: kubelet
+    daemon_reload: yes
+    enabled: yes
+    state: started
+
+- name: copy bootstrap rbac files
+  template:
+    src: "{{item}}"
+    dest: "{{kube_path}}"
+  loop: "{{rbac_files}}"
+
+- wait_for: timeout=10
+
+- name: Set apiserver access node permissions
+  shell: kubectl apply -f apiserver-to-kubelet-rbac.yaml
+  args:
+    chdir: "{{kube_path}}"
+
+- name: Set cluster allow Taint
+  shell: kubectl taint nodes node-role.kubernetes.io/master="":NoSchedule --all --overwrite=true
+
+- name: Create TLS bootstrap secret
+  shell: kubectl apply -f kubelet-bootstrap-secret.yaml
+  args:
+    chdir: "{{kube_path}}"
+
+- name: Create TLS Bootstrap Autoapprove RBAC
+  shell: kubectl apply -f kubelet-bootstrap-rbac.yaml
+  args:
+    chdir: "{{kube_path}}"
+
+- name: fetch bootstrap kubeconfig
+  fetch:
+    src: "{{kube_path}}/bootstrap-kubelet.kubeconfig"
+    dest: "{{local_path}}/"
+    flat: yes
+
+- name: fetch bootstrap secret
+  fetch:
+    src: "{{kube_path}}/kubelet-bootstrap-secret.yaml"
+    dest: "{{local_path}}/"
+    flat: yes

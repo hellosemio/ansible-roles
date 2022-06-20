@@ -1,0 +1,19 @@
+---
+# author: semio
+#
+- name: create scheduler log directory
+  file:
+    path: "{{kube_log_path}}/scheduler"
+    state: directory
+
+- name: ensure scheduler service maked
+  template:
+    src: kube-scheduler.service
+    dest: "{{service_file_path}}/kube-scheduler.service"
+
+- name: started and enable scheduler service
+  systemd:
+    name: kube-scheduler.service
+    daemon_reload: yes
+    enabled: yes
+    state: started

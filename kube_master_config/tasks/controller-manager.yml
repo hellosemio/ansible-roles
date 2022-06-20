@@ -1,0 +1,19 @@
+---
+# author: semio
+#
+- name: create controller-manager log directory
+  file:
+    path: "{{kube_log_path}}/controller-manager"
+    state: directory
+
+- name: create controller-manager service
+  template:
+    src: kube-controller-manager.service
+    dest: "{{service_file_path}}/kube-controller-manager.service"
+
+- name: ensure controller-manager start
+  systemd:
+    name: kube-controller-manager.service
+    daemon_reload: yes
+    enabled: yes
+    state: started

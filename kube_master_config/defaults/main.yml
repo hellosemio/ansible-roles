@@ -1,0 +1,18 @@
+---
+# author: semio
+#
+ip: "{{ansible_default_ipv4['address']}}"
+hostname: "{{ansible_nodename}}"
+
+local_path: /opt/project/roles/kube_master_config/files  
+
+etcd_pki_path: /etc/etcd/ssl
+etcd_data_path: /var/lib/etcd
+
+kube_pki_path: /etc/kubernetes/pki
+kube_path: /etc/kubernetes
+kube_log_path: /var/log/kubernetes
+kube_manifests_path: "{{ kube_path }}/manifests"
+
+service_file_path: /usr/lib/systemd/system
+
