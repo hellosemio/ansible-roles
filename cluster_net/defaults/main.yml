@@ -1,0 +1,8 @@
+---
+# author: semio
+#
+kube_path: /etc/kubernetes
+
+local_path: ../tmp
+
+kube_addons_conf_path: "{{ kube_path }}/addons"

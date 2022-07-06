@@ -1,0 +1,24 @@
+---
+# author: semio
+#
+- name: copy coredns image
+  copy:
+    src: "{{local_path}}/coredns.tar"
+    dest: "{{kube_path}}/"
+  delegate_to: "{{item}}"
+  loop: "{{ groups['k8s'] }}"
+
+- name: load coredns image
+  shell: docker load -i {{kube_path}}/coredns.tar
+  delegate_to: "{{item}}"
+  loop: "{{ groups['k8s'] }}"
+
+- name: copy coredns configure file
+  template:
+    src: coredns.yaml
+    dest: "{{kube_addons_conf_path}}/"
+
+- name: create kube dns
+  shell: kubectl apply -f coredns.yaml
+  args:
+    chdir: "{{kube_addons_conf_path}}"

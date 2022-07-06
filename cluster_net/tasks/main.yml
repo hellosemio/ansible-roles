@@ -1,0 +1,18 @@
+---
+# author: semio
+#
+- include_tasks: images.yml
+  loop: "{{ groups['k8s'] }}"
+  loop_control:
+    loop_var: delegate_all_hosts
+    pause: 2
+
+- name: copy calico configure
+  template:
+    src: calico.yaml
+    dest: "{{kube_addons_conf_path}}/"
+
+- name: install calico
+  shell: kubectl apply -f calico.yaml
+  args:
+    chdir: "{{kube_addons_conf_path}}"

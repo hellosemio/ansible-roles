@@ -1,0 +1,69 @@
+---
+# author: semio
+#
+- name: create proxy directory
+  file:
+    path: "{{kube_log_path}}/proxy"
+    state: directory
+
+- name: create addons config direstory
+  file:
+    path: "{{kube_addons_conf_path}}"
+    state: directory
+
+- name: copy proxy configuration
+  copy:
+    src: kube-proxy.rbac.yaml
+    dest: "{{kube_addons_conf_path}}/"
+
+- name: create kube proxy
+  shell: kubectl apply -f kube-proxy.rbac.yaml
+  args:
+    chdir: "{{kube_addons_conf_path}}"
+
+- name: create kube-proxy kubeconfig
+  shell: |
+    SECRET=$(kubectl -n kube-system get sa/kube-proxy --output=jsonpath='{.secrets[0].name}')
+    JWT_TOKEN=$(kubectl -n kube-system get secret/$SECRET --output=jsonpath='{.data.token}' | base64 -d)
+    kubectl config set-cluster kubernetes --certificate-authority={{ kube_pki_path }}/ca.pem --embed-certs=true --server=https://{{ kube_apiserver }}:{{ kube_apiserver_port }} --kubeconfig=kube-proxy.kubeconfig
+    kubectl config set-context kubernetes --cluster=kubernetes --user=kubernetes --kubeconfig=kube-proxy.kubeconfig
+    kubectl config set-credentials kubernetes --token=${JWT_TOKEN} --kubeconfig=kube-proxy.kubeconfig
+    kubectl config use-context kubernetes --kubeconfig=kube-proxy.kubeconfig
+  args:
+    chdir: "{{kube_path}}"
+
+- name: fetch proxy kubeconfig files
+  fetch:
+    src: "{{kube_path}}/kube-proxy.kubeconfig"
+    dest: "{{local_path}}/"
+    flat: yes
+
+- name: copy proxy kubeconfig to other node
+  copy:
+    src: "{{local_path}}/kube-proxy.kubeconfig"
+    dest: "{{kube_path}}/"
+  delegate_to: "{{item}}"
+  with_items:
+    - "{{ groups['k8s'] | symmetric_difference([ansible_default_ipv4.address]) }}"
+
+- name: copy proxy conf files
+  template:
+    src: kube-proxy-conf.yaml
+    dest: "{{kube_path}}/"
+  delegate_to: "{{item}}"
+  loop: "{{ groups['k8s'] }}"
+
+- name: copy proxy service
+  template:
+    src: kube-proxy.service
+    dest: "{{service_file_path}}/"
+  delegate_to: "{{item}}"
+  loop: "{{ groups['k8s'] }}"
+
+- name: start proxy service
+  systemd:
+    name: kube-proxy
+    state: started
+    enabled: yes
+  delegate_to: "{{item}}"
+  loop: "{{ groups['k8s'] }}"

@@ -1,0 +1,17 @@
+---
+# author: semio
+#
+kube_calico_node_image: "calico/node:v3.23.2"
+kube_calico_cni_image: "calico/cni:v3.23.2"
+kube_calico_ctl_image: "calico/ctl:v3.23.2"
+kube_calico_kube_controllers_image: "calico/kube-controllers:v3.23.2"
+
+local_net: "interface=ens33"
+
+calico_images:
+  - node.tar
+  - cni.tar
+  - ctl.tar
+  - kube-controllers.tar
+
+kube_cluster_cidr: "10.0.0.0/16"

@@ -1,0 +1,13 @@
+---
+# author: semio
+#
+- block:
+  - name: copy calico images.
+    copy:
+      src: "{{local_path}}/{{item}}"
+      dest: "{{kube_path}}/"
+    loop: "{{calico_images}}"
+  - name: load calico images
+    shell: docker load -i {{kube_path}}/{{item}}
+    loop: "{{calico_images}}"
+  delegate_to: "{{delegate_all_hosts}}"

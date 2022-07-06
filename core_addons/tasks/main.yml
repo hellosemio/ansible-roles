@@ -1,0 +1,6 @@
+---
+# author: semio
+#
+- import_tasks: coredns.yml
+
+- import_tasks: proxy.yml

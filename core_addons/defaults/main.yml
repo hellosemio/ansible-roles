@@ -1,0 +1,10 @@
+---
+# author: semio
+#
+kube_path: /etc/kubernetes
+kube_pki_path: /etc/kubernetes/pki
+kube_log_path: /var/log/kubernetes
+kube_addons_conf_path: "{{ kube_path }}/addons"
+service_file_path: /usr/lib/systemd/system
+
+local_path: /opt/project/roles/tmp
