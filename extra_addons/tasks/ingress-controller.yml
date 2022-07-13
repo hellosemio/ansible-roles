@@ -1,0 +1,9 @@
+---
+# author: semio
+#
+- name: install nginx ingress controller
+  shell: |
+    kubectl apply -f ingress-controller/{{item}}
+  loop: "{{kube_nginx_ingress_controller_files}}"
+  args:
+    chdir: "{{kube_extra_addons_path}}"

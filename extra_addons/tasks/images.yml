@@ -1,0 +1,18 @@
+---
+# author: semio
+#
+- block:
+  - name: copy extra addons images
+    copy:
+      src: "{{local_path}}/{{item}}"
+      dest: "{{kube_path}}/"
+    loop: "{{extra_addons_image_files}}"
+
+  - name: install extra addons images
+    shell: |
+      docker load -i {{item}}
+    loop: "{{extra_addons_image_files}}"
+    args:
+      chdir: "{{kube_path}}"
+
+  delegate_to: "{{delegate_all_host}}"

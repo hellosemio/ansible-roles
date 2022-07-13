@@ -1,0 +1,7 @@
+---
+# author: semio
+#
+- name: deploy external-dns
+  shell: kubectl apply -f external-dns/external-dns.yaml
+  args:
+    chdir: "kube_extra_addons_path"

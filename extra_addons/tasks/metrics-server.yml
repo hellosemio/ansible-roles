@@ -1,0 +1,7 @@
+---
+# author: semio
+#
+- name: deploy metrics-server
+  shell: kubectl apply -f metrics-server/components.yaml
+  args:
+    chdir: "{{kube_extra_addons_path}}"

@@ -1,0 +1,18 @@
+---
+# author: semio
+#
+- name: deploy prometheus
+  shell: |
+    kubectl create -f prometheus/setup/
+    kubectl create -f prometheus/
+  args:
+    chdir: "{{kube_extra_addons_path}}"
+
+- wait_for: timeout=10
+
+- name: add ingress and endpoint
+  shell: kubectl create -f prometheus/addons/
+  args:
+    chdir: "{{kube_extra_addons_path}}"
+
+- wait_for: timeout=5

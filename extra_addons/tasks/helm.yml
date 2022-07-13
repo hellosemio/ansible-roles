@@ -1,0 +1,15 @@
+---
+# author: semio
+#
+- name: deploy helm
+  copy:
+    src: "{{local_path}}/helm"
+    dest: "{{software_install_path}}/"
+    mode: "0755"
+
+- name: add the stable repo
+  shell: |
+    helm help
+    helm repo add stable http://mirror.azure.cn/kubernetes/charts
+    helm repo add aliyun https://kubernetes.oss-cn-hangzhou.aliyuncs.com/charts
+    helm repo update

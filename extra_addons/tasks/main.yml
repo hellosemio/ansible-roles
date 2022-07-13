@@ -1,0 +1,51 @@
+---
+# author: semio
+#
+- name: create extra addons directory
+  file:
+    path: "{{kube_extra_addons_path}}/{{item.path}}"
+    state: directory
+  with_filetree:
+    - templates/
+  when: item.state == 'directory'
+
+- name: copy extra addons files
+  template:
+    src: "{{item.src}}"
+    dest: "{{kube_extra_addons_path}}/{{item.path}}"
+  with_filetree:
+    - templates/
+  when: item.state == 'file'
+
+- include_tasks: images.yml
+  loop: "{{groups['k8s']}}"
+  loop_control:
+    loop_var: delegate_all_host
+    pause: 2
+
+- import_tasks: ingress-controller.yml
+
+- import_tasks: metrics-server.yml
+
+- import_tasks: external-dns.yml
+
+- import_tasks: dashboard.yml
+
+- import_tasks: weavescope.yml
+
+- import_tasks: prometheus.yml
+
+- import_tasks: helm.yml
+
+- import_tasks: whoami.yml
+
+- name: get kube dashboard secret
+  shell: |
+    kubectl -n kube-system describe secrets \
+    $(kubectl describe sa kubernetes-dashboard-admin -n kube-system | awk '/Tokens/ {print $2}') | awk '/token:/{print $2}'
+  register: kube_dashboard_secret
+
+- name: set addons access info to file
+  template:
+    src: k8s-addons-access.md
+    dest: "{{kube_path}}/"

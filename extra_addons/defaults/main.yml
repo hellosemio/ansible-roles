@@ -1,0 +1,11 @@
+---
+# author: semio
+#
+kube_path: /etc/kubernetes
+kube_extra_addons_path: "{{kube_path}}/ExtraAddons"
+
+local_path: /opt/project/roles/tmp
+
+kube_pki_path: /etc/kubernetes/pki
+
+software_install_path: '/usr/local/bin'

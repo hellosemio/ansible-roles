@@ -1,0 +1,7 @@
+---
+# author: semio
+#
+- name: deploy weavescope
+  shell: kubectl apply -f weavescope/scope.yaml
+  args:
+    chdir: "{{kube_extra_addons_path}}"

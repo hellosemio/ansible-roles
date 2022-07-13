@@ -1,0 +1,24 @@
+---
+# author: semio
+#
+- name: create the kubernetes-dashboard certificate
+  shell: |
+    echo '{"CN":"kubernetes-dashboard","key":{"algo":"rsa","size":2048},"names":[{"C":"CN","ST":"Shanghai","L":"Shanghai","O":"Kubernetes","OU":"Kubernetes System"}]}' > kubernetes-dashboard-csr.json
+    cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json -hostname=127.0.0.1,localhost,kubernetes-dashboard.k8s.local -profile=kubernetes kubernetes-dashboard-csr.json | cfssljson -bare kubernetes-dashboard
+  args:
+    chdir: "{{kube_pki_path}}"
+
+- name: fetch kubernetes-dashboard certificate
+  fetch:
+    src: "{{kube_pki_path}}/{{item}}"
+    dest: "{{local_path}}/"
+    flat: yes
+  loop: "{{dashboard_pki_files}}"
+
+- name: deploy kubernetes dashboard
+  shell: |
+    kubectl create secret generic kubernetes-dashboard-certs --from-file=dashboard.crt={{ kube_pki_path }}/kubernetes-dashboard.pem --from-file=dashboard.key={{ kube_pki_path }}/kubernetes-dashboard-key.pem -n kube-system
+    kubectl create secret tls kubernetes-dashboard-certs-tls --key {{ kube_pki_path }}/kubernetes-dashboard-key.pem --cert {{ kube_pki_path }}/kubernetes-dashboard.pem -n kube-system
+    kubectl apply -f dashboard/dashboard.yaml
+  args:
+    chdir: "{{kube_extra_addons_path}}"

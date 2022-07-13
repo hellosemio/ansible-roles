@@ -1,0 +1,62 @@
+---
+# author: semio
+#
+kube_ingress_ip: "192.168.3.106"
+kube_external_dns_ip: ""
+
+kube_nginx_ingress_controller_image: "k8s.gcr.io/ingress-nginx/controller:v1.2.1"
+kube_webhook_image: "k8s.gcr.io/ingress-nginx/kube-webhook-certgen:v1.1.1"
+
+kube_metrics_server_image: "k8s.gcr.io/metrics-server/metrics-server:v0.6.1"
+
+kube_dashboard_image: "kubernetesui/dashboard:v2.6.0"
+kube_scraper_image: "kubernetesui/metrics-scraper:v1.0.8"
+
+kube_coredns_image: "coredns/coredns:1.9.0"
+kube_coredns_etcd_image: "quay.io/coreos/etcd:latest"
+kube_external_dns_image: "bitnami/external-dns:0.12.0"
+
+kube_weavescope_image: "ghcr.io/weaveworks/launcher/scope:1.13.2"
+
+kube_rbac_proxy_image: "quay.io/brancz/kube-rbac-proxy:v0.13.0"
+kube_prometheus_operator_image: "quay.io/prometheus-operator/prometheus-operator:v0.57.0"
+kube_prometheus_config_image: "quay.io/prometheus-operator/prometheus-config-reloader:v0.57.0"
+kube_alertmanager_image: "quay.io/prometheus/alertmanager:v0.24.0"
+kube_blackbox_image: "quay.io/prometheus/blackbox-exporter:v0.21.1"
+kube_configmap_image: "jimmidyson/configmap-reload:v0.5.0"
+kube_grafana_image: "grafana/grafana:9.0.2"
+kube_state_metrics_image: "k8s.gcr.io/kube-state-metrics/kube-state-metrics:v2.5.0"
+kube_node_exporter_image: "quay.io/prometheus/node-exporter:v1.3.1"
+kube_prometheus_image: "quay.io/prometheus/prometheus:v2.36.2"
+kube_prometheus_adapter_image: "k8s.gcr.io/prometheus-adapter/prometheus-adapter:v0.9.1"
+
+whoami_image: "containous/whoami:latest"
+
+kube_nginx_ingress_controller_files:
+  - ingress-nginx.yaml
+
+dashboard_pki_files:
+  - kubernetes-dashboard.pem
+  - kubernetes-dashboard-key.pem
+
+extra_addons_image_files:
+  - controller.tar
+  - kube-webhook-certgen.tar
+  - metrics-server.tar
+  - etcd_coreos.tar
+  - external-dns.tar
+  - dashboard.tar
+  - scraper.tar
+  - weavescope.tar
+  - alertmanager.tar
+  - blackbox-exporter.tar
+  - configmap-reload.tar
+  - grafana.tar
+  - kube-rbac-proxy.tar
+  - kube-state-metrics.tar
+  - node-exporter.tar
+  - prometheus-adapter.tar
+  - prometheus-config-reloader.tar
+  - prometheus-operator.tar
+  - prometheus.tar
+  - whoami.tar

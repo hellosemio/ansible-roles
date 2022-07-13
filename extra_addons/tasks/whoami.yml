@@ -1,0 +1,7 @@
+---
+# author: semio
+#
+- name: deploy whoami
+  shell: kubectl apply -f whoami.yaml
+  args:
+    chdir: "{{kube_extra_addons_path}}"
